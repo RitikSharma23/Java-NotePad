@@ -1,3 +1,4 @@
+import javax.print.event.PrintJobListener;
 import javax.swing.*;
 import javax.swing.plaf.MenuItemUI;
 import java.io.*; 
@@ -15,6 +16,8 @@ class ActionEventDemo implements ActionListener {
     JTextArea a;
     JMenu menu,menu2,menu3,sub;
     JMenuItem neww,nw,open,save,savea,page,print,exit,undo,cut,copy,paste,delete,find,findn,findp,replace,got,select,time,font,zoom,status,word,in,out,restore;
+    int flag=0;
+    String filedetail;
     public void GUI(){
         jf.setTitle("Notepad Home");
         jf.getContentPane().setLayout(null);
@@ -144,6 +147,7 @@ class ActionEventDemo implements ActionListener {
 
         a = new JTextArea();   
         a.setBounds(0, 0, 1000,650);
+        jf.setBackground(Color.white);
         jf.add(a);
        
     }
@@ -162,6 +166,8 @@ class ActionEventDemo implements ActionListener {
              int i=fc.showOpenDialog(new JFrame());
 
                 if (i == JFileChooser.APPROVE_OPTION) {
+                    filedetail=fc.getSelectedFile().getPath();
+                    flag=1;
                     File f = fc.getSelectedFile();
                     String filepath=f.getPath();
 
@@ -177,40 +183,101 @@ class ActionEventDemo implements ActionListener {
                 }
 
         }else if(e.getSource()==save){
+            JFileChooser js=new JFileChooser();    
+
+            if(flag==0){     
+            int i=js.showSaveDialog(new JFrame());
+            File f = js.getSelectedFile();
+            js.setDialogTitle("Save File");
+
+            if(i==JFileChooser.APPROVE_OPTION){
+            filedetail=js.getSelectedFile().getPath();
+
+                
+                int x=0;
+                System.out.println(f.getPath());
+                if(f.exists()==true){
+                    x=JOptionPane.showConfirmDialog(js, "Kya kar raha hai be waha par pahale se hi hai \n Phir bhi save karna hai final", "Copy Cat", i);
+                    if(x==0){                   
+                        try {
+                            a.write(new OutputStreamWriter(new FileOutputStream(f),"utf-8"));
+                            jf.setTitle(f.getName());
+                            flag=1;
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                }
+                }else{
+                    try {
+                        a.write(new OutputStreamWriter(new FileOutputStream(f),"utf-8"));
+                        jf.setTitle(f.getName());
+                        flag=1;
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }                    
+                }
+
+            }
+        }else{
+
+            try{
+            FileWriter fw=new FileWriter(filedetail);
+            BufferedWriter buffer = new BufferedWriter(fw);  
+            buffer.write(a.getText().toString());  
+            buffer.close();  
+            }catch(Exception ex){
+                ex.getStackTrace();
+            }
+        }
+
+        }else if(e.getSource()==savea){
             JFileChooser js=new JFileChooser();         
             int i=js.showSaveDialog(new JFrame());
             js.setDialogTitle("Save File");
 
             if(i==JFileChooser.APPROVE_OPTION){
                 File f = js.getSelectedFile();
-                int x=5;
+                int x=0;
                 System.out.println(f.getPath());
                 if(f.exists()==true){
-                    x=JOptionPane.showConfirmDialog(js, "Kya kar raha hai be waha par pahale se hi hai ", "Save Error", i);
+                    x=JOptionPane.showConfirmDialog(js, "Kya kar raha hai be waha par pahale se hi hai \n Phir bhi save karna hai final", "Copy Cat", i);
                     System.out.println(x);
-                }else{
-
                     if(x==0){                   
-                        
                         try {
                             a.write(new OutputStreamWriter(new FileOutputStream(f),"utf-8"));
                             jf.setTitle(f.getName());
-
-
-
-                            
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                            System.out.println(ex);
                         }
                 }
+                }else{
+                    try {
+                        a.write(new OutputStreamWriter(new FileOutputStream(f),"utf-8"));
+                        jf.setTitle(f.getName());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }                    
                 }
 
             }
+        }else if(e.getSource()==page){
+            JFrame pg=new JFrame();
+            pg.setBounds(300, 300,700,400);
+            pg.setTitle("Page Setup");
+            pg.setVisible(true);
+        }else if(e.getSource()==print){
+            JFrame pr=new JFrame();
+            pr.setBounds(300, 300,700,400);
+            pr.setTitle("Print Page");
+            pr.setVisible(true);            
+        }else if(e.getSource()==exit){
+            System.exit(0);        
+        }
 
+// ----------------------------------   EDIT OPTION   -----------------------------------
 
-            
-
+        else if(e.getSource()==exit){
+            System.exit(0);        
         }
  
     }
